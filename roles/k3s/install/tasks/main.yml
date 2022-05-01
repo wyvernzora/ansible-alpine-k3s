@@ -1,0 +1,23 @@
+---
+- name: k3s.master | Pick the cluster leader
+  set_fact:
+    k3s_leader: "{{ hostvars[groups['master'][0]]['ansible_host'] | default(groups['master'][0]) }}"
+
+- name: k3s.master | K3S leader selected
+  debug:
+    var: k3s_leader
+
+- name: k3s/install | Provision master nodes
+  include_role:
+    name: k3s/install/master
+  when: "'master' in group_names"
+
+- name: k3s/install | Provision worker nodes
+  include_role:
+    name: k3s/install/worker
+  when: "'worker' in group_names"
+
+- name: k3s/install | Set up log rotation
+  ansible.builtin.copy:
+    src: files/k3s.logrotate
+    dest: /etc/logrotate.d/k3s

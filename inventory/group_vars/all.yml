@@ -1,0 +1,7 @@
+---
+k3s_version: latest
+k3s_token: secret-K3S-token-here
+
+# Cluster timezone
+timezone: "Your/Timezone"
+
