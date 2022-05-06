@@ -1,0 +1,12 @@
+---
+- name: Create K3s user
+  user:
+    name: "{{ user.name }}"
+    state: present
+
+- name: Set up authorized key
+  authorized_key:
+    user: "{{ user.name }}"
+    key: "{{ user.authorized_key }}"
+    state: present
+  when: user.authorized_key is defined

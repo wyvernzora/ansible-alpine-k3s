@@ -1,4 +1,7 @@
 
+- debug:
+    var: k3s
+
 - name: Write K3S env file
   template:
     src: templates/k3s.env.j2
@@ -8,7 +11,7 @@
     mode: 600
   vars:
     envars:
-      K3S_TOKEN: "{{ k3s_token }}"
+      K3S_TOKEN: "{{ k3s.token }}"
 
 - name: Create k3s service
   template:

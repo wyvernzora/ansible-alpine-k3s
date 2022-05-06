@@ -57,11 +57,6 @@ Vagrant.configure("2") do |config|
       "master" => ["control1", "control2", "control3"],
       "worker" => ["node1", "node2"],
       "k3s_cluster:children" => ["master", "worker"],
-      "k3s_cluster:vars" => {
-        # "k3s_version" => "latest",
-        "k3s_version" => "v1.23.6+k3s1",
-        "k3s_token" => "secret-token"
-      }
     }
     ansible.host_vars = {
       "all" => {

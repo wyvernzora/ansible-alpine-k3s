@@ -1,7 +1,10 @@
 ---
 - hosts: all
   become: yes
+  vars_files:
+    - vars/main.yml
   roles:
-   - bootstrap/alpine
-   - k3s/download
-   - k3s/install
+    - k3s/bootstrap
+    - k3s/download
+    - k3s/install
+    - kube-vip/install

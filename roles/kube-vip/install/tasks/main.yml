@@ -1,0 +1,16 @@
+---
+- name: Copy RBAC manifest
+  template:
+    src: kube-vip.rbac.yaml.j2
+    dest: /var/lib/rancher/k3s/server/manifests/kube-vip.rbac.yaml
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Copy VIP manifest
+  template:
+    src: kube-vip.yaml.j2
+    dest: /var/lib/rancher/k3s/server/manifests/kube-vip.yaml
+    owner: root
+    group: root
+    mode: 0644

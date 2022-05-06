@@ -1,0 +1,1 @@
+k3s_version: "{{ k3s.version | default('latest') }}"

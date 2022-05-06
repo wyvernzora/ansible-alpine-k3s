@@ -1,7 +1,16 @@
 ---
-k3s_version: latest
-k3s_token: secret-K3S-token-here
+# timezone: "America/Los_Angeles"
 
-# Cluster timezone
-timezone: "Your/Timezone"
+k3s:
+  version: latest
+  token: secret-K3S-token-here
+
+user:
+  name: k3s
+  authorized_key: https://github.com/wyvernzora.keys
+
+kube_vip:
+  version: v0.4.3
+  vip_iface: eth0
+  api_endpoint: 10.10.1.4
 
