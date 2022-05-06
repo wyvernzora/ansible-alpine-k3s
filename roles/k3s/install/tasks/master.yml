@@ -1,0 +1,50 @@
+
+- name: Write K3S env file
+  template:
+    src: templates/k3s.env.j2
+    dest: /etc/rancher/k3s/k3s.env
+    owner: root
+    group: root
+    mode: 600
+  vars:
+    envars:
+      K3S_TOKEN: "{{ k3s_token }}"
+
+- name: Create k3s service
+  template:
+    src: templates/k3s.service.j2
+    dest: /etc/init.d/k3s
+    owner: root
+    group: root
+    mode: 755
+  vars:
+    k3s_cmd_args: server
+
+- name: Start K3S service
+  service:
+    name: k3s
+    enabled: yes
+    state: started
+    runlevel: default
+
+- name: Wait for master nodes to join cluster
+  command:
+    cmd: k3s kubectl get nodes -l "node-role.kubernetes.io/master=true" -o=jsonpath="{.items[*].metadata.name}"
+  register: nodes
+  until: nodes.rc == 0 and (nodes.stdout.split() | length) == (groups['master'] | length)
+  retries: "{{ retry_count | default(20) }}"
+  delay: 10
+  changed_when: false
+
+- name: Wait for node-token
+  wait_for:
+    path: /var/lib/rancher/k3s/server/node-token
+
+- name: Read node-token from master
+  slurp:
+    src: /var/lib/rancher/k3s/server/node-token
+  register: node_token
+
+- name: Store node-token
+  set_fact:
+    node_token: "{{ node_token.content | b64decode | regex_replace('\n', '') }}"

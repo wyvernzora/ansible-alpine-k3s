@@ -2,6 +2,14 @@
 LOG_FILE=/var/log/k3s.log
 ENV_FILE=/etc/rancher/k3s/k3s.env
 
+{% if ansible_host == hostvars[groups['master'][0]]['ansible_host'] | default(groups['master'][0]) %}
+K3S_CMD_ARGS='server --cluster-init {{ k3s_cmd_args_extra | default('') }}'
+{% elif "master" in group_names %}
+K3S_CMD_ARGS='server --server https://{{ k3s_leader }}:6443 {{ k3s_cmd_args_extra | default('') }}'
+{% else %}
+K3S_CMD_ARGS='agent --server https://{{k3s_leader }}:6443 {{ k3s_cmd_args_extra | default('') }}'
+{% endif %}
+
 depend() {
     after network-online
     want cgroups
@@ -14,7 +22,7 @@ start_pre() {
 supervisor=supervise-daemon
 name=k3s
 command=/usr/local/bin/k3s
-command_args="server >>${LOG_FILE} 2&>1"
+command_args="${K3S_CMD_ARGS} >>${LOG_FILE} 2&>1"
 
 output_log=${LOG_FILE}
 error_log=${LOG_FILE}

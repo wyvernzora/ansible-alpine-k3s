@@ -1,0 +1,28 @@
+---
+- name: Write K3S env file
+  template:
+    src: templates/k3s.env.j2
+    dest: /etc/rancher/k3s/k3s.env
+    owner: root
+    group: root
+    mode: 600
+  vars:
+    envars:
+      K3S_TOKEN: "{{ hostvars[groups['master'][0]]['node_token'] }}"
+
+- name: Create k3s service
+  template:
+    src: templates/k3s.service.j2
+    dest: /etc/init.d/k3s
+    owner: root
+    group: root
+    mode: 755
+  vars:
+    k3s_cmd_args: agent
+
+- name: Start K3S service
+  service:
+    name: k3s
+    enabled: yes
+    state: started
+    runlevel: default

@@ -51,8 +51,8 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", inline: "apk add python3"
 
   config.vm.provision "ansible",type: "ansible", run: "never" do |ansible|
-    ansible.playbook = "../main.yml"
     ansible.limit = "all"
+    ansible.playbook = "../main.yml"
     ansible.groups = {
       "master" => ["control1", "control2", "control3"],
       "worker" => ["node1", "node2"],
@@ -60,7 +60,12 @@ Vagrant.configure("2") do |config|
       "k3s_cluster:vars" => {
         # "k3s_version" => "latest",
         "k3s_version" => "v1.23.6+k3s1",
-        "k3s_token" => "secret-token",
+        "k3s_token" => "secret-token"
+      }
+    }
+    ansible.host_vars = {
+      "all" => {
+        "interpreter_python" => "silent_auto"
       }
     }
   end

@@ -1,0 +1,26 @@
+---
+# Add boot flags required by Rancher/K3S;
+# See https://rancher.com/docs/k3s/latest/en/advanced/#additional-preparation-for-alpine-linux-setup
+- name: Add cgroups boot flags
+  lineinfile:
+    path: /etc/update-extlinux.conf
+    search_string: default_kernel_opts="quiet rootfstype=ext4"
+    line: default_kernel_opts="quiet rootfstype=ext4 cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory"
+    state: present
+  register: bootargs
+
+- name: Update bootloader
+  shell:
+    cmd: update-extlinux
+  when: bootargs.changed
+
+- name: Reboot
+  reboot:
+  when: bootargs.changed
+
+- name: Enable cgroup service
+  service:
+    name: cgroups
+    enabled: yes
+    state: started
+    runlevel: boot
