@@ -7,4 +7,5 @@
     - k3s/bootstrap
     - k3s/download
     - k3s/install
+    - k3s/kubeconfig
     - kube-vip/install

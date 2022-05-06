@@ -1,0 +1,27 @@
+---
+- name: Create ~/.kube directory
+  file:
+    path: ~{{ user.name }}/.kube
+    state: directory
+    owner: "{{ user.name }}"
+    mode: "u=rwx,g=rx,o="
+
+- name: Copy kubeconfig to ~/.kube
+  copy:
+    src: /etc/rancher/k3s/k3s.yaml
+    dest: ~{{ user.name }}/.kube/config
+    remote_src: yes
+    owner: "{{ user.name }}"
+    mode: "u=rw,g=,o="
+
+- name: Create kubectl symlink
+  file:
+    src: /usr/local/bin/k3s
+    dest: /usr/local/bin/kubectl
+    state: link
+
+- name: Create crictl symlink
+  file:
+    src: /usr/local/bin/k3s
+    dest: /usr/local/bin/crictl
+    state: link

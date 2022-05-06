@@ -13,4 +13,3 @@ kube_vip:
   version: v0.4.3
   vip_iface: eth0
   api_endpoint: 10.10.1.4
-
